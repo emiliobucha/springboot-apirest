@@ -1,16 +1,14 @@
 pipeline {
     agent any
+    environment {
+        AWS_ACCOUNT_CREDENTIALS_ID = 'AWS Jenkins'
+        REGION = 'us-east-1'
+        FILE = 'bucha-artifact-test.zip'
+        BUCKET = 'semperti-rapientrega-development-s3-backend-artifact'
+        PROJECT = 'bucha-test'
+    }
     stages {
-        environment {
-            
-            AWS_ACCOUNT_CREDENTIALS_ID = 'AWS Jenkins'
-            REGION = 'us-east-1'
-            FILE = 'bucha-artifact-test.zip'
-            BUCKET = 'semperti-rapientrega-development-s3-backend-artifact'
-            PROJECT = 'bucha-test'
-            
-            
-        }
+
         stage('Build') {
             steps {
                 sh "mvn clean package -B -DskipTests"
