@@ -22,7 +22,7 @@ pipeline {
             }
         }
         stage('Upload') {
-            step {
+            steps {
                 sh "echo Uploading... pepito"
             }
             script {
