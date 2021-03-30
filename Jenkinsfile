@@ -1,38 +1,25 @@
-def call(body) {
-
-    def config = [:]
-    body.resolveStrategy = Closure.DELEGATE_FIRST
-    body.delegate = config
-    body()
-
-    node {
-        // Clean workspace before doing anything
-        deleteDir()
-
-        try {
-            stage ('Clone') {
-                checkout scm
+pipeline {
+    agent any
+    options {
+	    withAWS(region:'us-east-1',credentials:'AWS Jenkins')
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh "mvn -DskipTests clean package"
+                sh "zip bucha-artifact-test.zip target/*.jar Dockerfile"
             }
-            stage ('Build') {
-                sh "echo 'building ${config.projectName} ...'"
-            }
-            stage ('Tests') {
-                parallel 'static': {
-                    sh "echo 'shell scripts to run static tests...'"
-                },
-                'unit': {
-                    sh "echo 'shell scripts to run unit tests...'"
-                },
-                'integration': {
-                    sh "echo 'shell scripts to run integration tests...'"
+
+            post {
+                success {
+                    archiveArtifacts 'bucha-artifact-test.zip'
                 }
             }
-            stage ('Deploy') {
-                sh "echo 'deploying to server ${config.serverDomain}...'"
+        }
+        stage('Upload') {
+            steps {
+                s3Upload(file:'bucha-artifact-test.zip', bucket:'semperti-rapientrega-development-s3-backend-artifact', path:'bucha-artifact-test.zip')
             }
-        } catch (err) {
-            currentBuild.result = 'FAILED'
-            throw err
         }
     }
 }
