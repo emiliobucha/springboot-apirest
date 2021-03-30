@@ -1,14 +1,14 @@
 pipeline {
     agent any
     stages {
-        stage('Setting up environment variables'){
-            steps {
-                def AWS_ACCOUNT_CREDENTIALS_ID = 'AWS Jenkins'
-                def REGION = 'us-east-1'
-                def FILE = 'bucha-artifact-test.zip'
-                def BUCKET = 'semperti-rapientrega-development-s3-backend-artifact'
-                def PROJECT = 'bucha-test'
-            }
+        environment {
+            
+            AWS_ACCOUNT_CREDENTIALS_ID = 'AWS Jenkins'
+            REGION = 'us-east-1'
+            FILE = 'bucha-artifact-test.zip'
+            BUCKET = 'semperti-rapientrega-development-s3-backend-artifact'
+            PROJECT = 'bucha-test'
+            
             
         }
         stage('Build') {
