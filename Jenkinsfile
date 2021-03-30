@@ -25,8 +25,10 @@ pipeline {
             steps {
                 sh "echo Uploading... pepito"
                 withAWS(region:"${REGION}",credentials:"${AWS_ACCOUNT_CREDENTIALS_ID}") {    
-                    s3Upload(file:"${FILE}", bucket:"${BUCKET}", path:"${PROJECT}/")
+                //   s3Upload(file:"${FILE}", bucket:"${BUCKET}", path:"${PROJECT}/")
+                    sh "aws s3 cp ${FILE} ${BUCKET}"
                 }
+                
                 
             }
             post {
