@@ -1,22 +1,29 @@
 pipeline {
     agent any
     stages {
+	stage('Setting up environment variables'){
+	  	def AWS_ACCOUNT_CREDENTIALS_ID = 'AWS Jenkins'
+		def REGION = 'us-east-1'
+		def FILE = 'bucha-artifact-test.zip'
+		def BUCKET = 'semperti-rapientrega-development-s3-backend-artifact'
+		def PROJECT = 'bucha-test'
+      	}
         stage('Build') {
             steps {
                 sh "mvn clean package -B -DskipTests"
-                sh "zip bucha-artifact-test.zip target/*.jar Dockerfile"
+                sh "zip ${FILE} target/*.jar Dockerfile"
             }
 
             post {
                 success {
-                    archiveArtifacts 'bucha-artifact-test.zip'
+                    archiveArtifacts "${FILE}"
                 }
             }
         }
         stage('Upload') {
             steps {
-		withAWS(region:'us-east-1',credentials:'AWS Jenkins') {    
-                  s3Upload(file:'bucha-artifact-test.zip', bucket:'semperti-rapientrega-development-s3-backend-artifact')
+		    	withAWS(region:"${REGION}",credentials:"${AWS_ACCOUNT_CREDENTIALS_ID}") {    
+			s3Upload(file:"${FILE}", bucket:"${BUCKET}", path:"${PROJECT}/")
 		}
             }
         }
