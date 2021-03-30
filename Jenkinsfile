@@ -24,10 +24,14 @@ pipeline {
         stage('Upload') {
             steps {
                 sh "echo Uploading... pepito"
-            }
-            script {
                 withAWS(region:"${REGION}",credentials:"${AWS_ACCOUNT_CREDENTIALS_ID}") {    
                     s3Upload(file:"${FILE}", bucket:"${BUCKET}", path:"${PROJECT}/")
+                }
+                
+            }
+            post {
+                success {
+                    sh "echo Uploaded... pepito"
                 }
             }
         }
