@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "mvn package -B -DSkipTests"
+                sh "mvn clean package -B -DskipTests"
                 sh "zip bucha-artifact-test.zip target/*.jar Dockerfile"
             }
 
