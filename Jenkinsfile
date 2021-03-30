@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    options {
-	    withAWS(region:'us-east-1',credentials:'AWS Jenkins')
-    }
     stages {
         stage('Build') {
             steps {
@@ -18,7 +15,9 @@ pipeline {
         }
         stage('Upload') {
             steps {
-                s3Upload(file:'bucha-artifact-test.zip', bucket:'semperti-rapientrega-development-s3-backend-artifact', path:'bucha-artifact-test.zip')
+		withAWS(region:'us-east-1',credentials:'AWS Jenkins') {    
+                  s3Upload(file:'bucha-artifact-test.zip', bucket:'semperti-rapientrega-development-s3-backend-artifact')
+		}
             }
         }
     }
