@@ -50,65 +50,65 @@ pipeline {
     //    ANSIBLE_HOST_KEY_CHECKING = 'false'
     //}
     stages {
-        stage('Checkout Source') {
-            steps {
-                // git credentialsId: 'dc69dd47-d601-4cb0-adbe-548c17e15506', url: "http://<gitRepo>/<username>/<repoName>.git"
-                checkout scm
-                script {
-                    def pom = readMavenPom file: 'pom.xml'
-                    def version = pom.version
-                    devTag  = "${version}-" + currentBuild.number
-                    prodTag = "${version}"
-                }
-            }
-        }
-        stage('Build War File') {
-            steps {
-                echo "Building version ${devTag}"
-                sh "${mvnCmd} versions:set -DnewVersion=$env.${devTag}"
-                sh "${mvnCmd} clean package -DskipTests=true"
-            }
-        }
-        stage('Unit Tests') {
-            steps {
-                echo "Running Unit Tests"
-                sh "${mvnCmd} test"
-                // It displays the results of tests in the Jenkins Overview
-                //step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
-            }
-        }
-        stage('Code Analysis') {
-            steps {
-                script {
-                echo "Running Code Analysis"
-                //sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube:9000/ -Dsonar.projectName=${JOB_BASE_NAME} -Dsonar.projectVersion=${devTag}"
-                }
-            }
-        }
-        stage('Publish to Nexus') {
-            steps {
-                echo "Publish to Nexus"
-                //sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus:8081/repository/releases"
-            }
-        }
-        stage('Create Zip Artifact') {
-            steps {
-                echo "STAGE 4 - Create Artifact"
-                //Test cert, delete this line after the probe.
-                sh "echo test > serco.crt"
-                zip archive: true, glob: 'Dockerfile, serco.crt, target/*.jar', zipFile: 'rapientrega.zip', overwrite: true
-            }
-        }
-        stage('Upload Artifact to S3 Bucket') {
-            steps {
-                input "Upload Artifact ${artifactDev} to S3 Bucket ${s3ArtifactDev}?"
-                println artifactDev
-                println s3ArtifactDev
-                withAWS(credentials: "${awsCredentials}", region: "${awsRegion}") {
-                    s3Upload(file:"${artifactDev}", bucket:"${s3ArtifactDev}", path:"${artifactDev}")
-                }
-            }
-        }
+        // stage('Checkout Source') {
+        //     steps {
+        //         // git credentialsId: 'dc69dd47-d601-4cb0-adbe-548c17e15506', url: "http://<gitRepo>/<username>/<repoName>.git"
+        //         checkout scm
+        //         script {
+        //             def pom = readMavenPom file: 'pom.xml'
+        //             def version = pom.version
+        //             devTag  = "${version}-" + currentBuild.number
+        //             prodTag = "${version}"
+        //         }
+        //     }
+        // }
+        // stage('Build War File') {
+        //     steps {
+        //         echo "Building version ${devTag}"
+        //         sh "${mvnCmd} versions:set -DnewVersion=$env.${devTag}"
+        //         sh "${mvnCmd} clean package -DskipTests=true"
+        //     }
+        // }
+        // stage('Unit Tests') {
+        //     steps {
+        //         echo "Running Unit Tests"
+        //         sh "${mvnCmd} test"
+        //         // It displays the results of tests in the Jenkins Overview
+        //         //step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+        //     }
+        // }
+        // stage('Code Analysis') {
+        //     steps {
+        //         script {
+        //         echo "Running Code Analysis"
+        //         //sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube:9000/ -Dsonar.projectName=${JOB_BASE_NAME} -Dsonar.projectVersion=${devTag}"
+        //         }
+        //     }
+        // }
+        // stage('Publish to Nexus') {
+        //     steps {
+        //         echo "Publish to Nexus"
+        //         //sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus:8081/repository/releases"
+        //     }
+        // }
+        // stage('Create Zip Artifact') {
+        //     steps {
+        //         echo "STAGE 4 - Create Artifact"
+        //         //Test cert, delete this line after the probe.
+        //         sh "echo test > serco.crt"
+        //         zip archive: true, glob: 'Dockerfile, serco.crt, target/*.jar', zipFile: 'rapientrega.zip', overwrite: true
+        //     }
+        // }
+        // stage('Upload Artifact to S3 Bucket') {
+        //     steps {
+        //         input "Upload Artifact ${artifactDev} to S3 Bucket ${s3ArtifactDev}?"
+        //         println artifactDev
+        //         println s3ArtifactDev
+        //         withAWS(credentials: "${awsCredentials}", region: "${awsRegion}") {
+        //             s3Upload(file:"${artifactDev}", bucket:"${s3ArtifactDev}", path:"${artifactDev}")
+        //         }
+        //     }
+        // }
         stage('Check CodePipeline Deploy ElasticBeanstalk') {
             steps {
                 echo "Check CodePipeline Running"
