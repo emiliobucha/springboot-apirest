@@ -28,7 +28,7 @@ def artifactDev = "${app}.zip"
 def artifactProd = "${app}.zip"
 def s3ArtifactDev = "${prefix}-${app}-${dev}-s3-backend-artifact"
 def s3ArtifactProd = "${prefix}-${app}-${prod}-s3-backend-artifact"
-def awsCredentials = "AWS Jenkins"
+def awsCredentials = "aws-bucha"
 def awsRegion = "us-east-1"
 
 // ElasticBeanstalk Blue/Green
