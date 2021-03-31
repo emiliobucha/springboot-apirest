@@ -115,7 +115,8 @@ pipeline {
                 withAWS(credentials: "${awsCredentials}", region: "${awsRegion}") {
                     ebWaitOnEnvironmentStatus(
                         applicationName: "${ebDevAppBlue}",
-                        environmentName: "${ebDevEnvBlue}"
+                        environmentName: "${ebDevEnvBlue}",
+                        region: "${awsRegion}"
                     )
                 }
                 //def ebDevAppBlueSucceeded = sh (script: """aws codepipeline list-action-executions --pipeline-name semperti-rapientrega-development-pipeline-backend | jq '.actionExecutionDetails[] | select(.status=="Succeeded" and .stageName=="Deploy") | .status'""", returnStdout: true).trim()
